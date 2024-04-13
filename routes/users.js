@@ -5,6 +5,7 @@ var checkvalid = require('../validators/user');
 var { validationResult } = require('express-validator');
 var protectLogin = require('../middlewares/protectLogin');
 var protectRole = require('../middlewares/protectRole');
+// var isAuthenticated = require('../configs/auth');
 require('express-async-errors');
 
 router.get('/', protectLogin, protectRole('ADMIN', 'MODIFIER'), async function (req, res, next) {
@@ -29,6 +30,7 @@ router.post('/', checkvalid(), protectLogin, protectRole('ADMIN'), async functio
   }
   try {
     var newUser = new userModel({
+      name: req.body.name,
       username: req.body.username,
       password: req.body.password,
       email: req.body.email,
@@ -72,6 +74,104 @@ router.delete('/:id', async function (req, res, next) {
     res.status(200).send(user);
   } catch (error) {
     res.status(404).send(error);
+  }
+});
+
+router.get('/profile/:id', async function (req, res, next) {
+  try {
+    const id = req.params.id;
+    const user = await userModel.findById(id).select('-password');
+    return res.status(200).json({
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.put('/bookmark/:id', async function (req, res, next) {
+  try {
+    const loggedInUserId = req.body.id;
+    const tweetId = req.params.id;
+    const user = await userModel.findById(loggedInUserId);
+    if (user.bookmarks.includes(tweetId)) {
+      // remove
+      await userModel.findByIdAndUpdate(loggedInUserId, { $pull: { bookmarks: tweetId } });
+      return res.status(200).json({
+        message: 'Removed from bookmarks.',
+      });
+    } else {
+      // bookmark
+      await userModel.findByIdAndUpdate(loggedInUserId, { $push: { bookmarks: tweetId } });
+      return res.status(200).json({
+        message: 'Saved to bookmarks.',
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.get('/otheruser/:id', async function (req, res, next) {
+  try {
+    const { id } = req.params;
+    const otherUsers = await userModel.find({ _id: { $ne: id } }).select('-password');
+    if (!otherUsers) {
+      return res.status(401).json({
+        message: 'Currently do not have any users.',
+      });
+    }
+    return res.status(200).json({
+      otherUsers,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.post('/follow/:id', async function (req, res, next) {
+  try {
+    const loggedInUserId = req.body.id;
+    const userId = req.params.id;
+    const loggedInUser = await userModel.findById(loggedInUserId);
+    const user = await userModel.findById(userId);
+    if (!user.followers.includes(loggedInUserId)) {
+      await user.updateOne({ $push: { followers: loggedInUserId } });
+      await loggedInUser.updateOne({ $push: { following: userId } });
+    } else {
+      return res.status(400).json({
+        message: `User already followed to ${user.name}`,
+      });
+    }
+    return res.status(200).json({
+      message: `${loggedInUser.name} just follow to ${user.name}`,
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.post('/unfollow/:id', async function (req, res, next) {
+  try {
+    const loggedInUserId = req.body.id;
+    const userId = req.params.id;
+    const loggedInUser = await userModel.findById(loggedInUserId);
+    const user = await userModel.findById(userId);
+    if (loggedInUser.following.includes(userId)) {
+      await user.updateOne({ $pull: { followers: loggedInUserId } });
+      await loggedInUser.updateOne({ $pull: { following: userId } });
+    } else {
+      return res.status(400).json({
+        message: `User has not followed yet`,
+      });
+    }
+    return res.status(200).json({
+      message: `${loggedInUser.name} unfollow to ${user.name}`,
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
   }
 });
 
