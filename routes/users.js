@@ -77,18 +77,6 @@ router.delete('/:id', async function (req, res, next) {
   }
 });
 
-router.get('/profile/:id', async function (req, res, next) {
-  try {
-    const id = req.params.id;
-    const user = await userModel.findById(id).select('-password');
-    return res.status(200).json({
-      user,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
 router.put('/bookmark/:id', async function (req, res, next) {
   try {
     const loggedInUserId = req.body.id;
@@ -107,23 +95,6 @@ router.put('/bookmark/:id', async function (req, res, next) {
         message: 'Saved to bookmarks.',
       });
     }
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-router.get('/otheruser/:id', async function (req, res, next) {
-  try {
-    const { id } = req.params;
-    const otherUsers = await userModel.find({ _id: { $ne: id } }).select('-password');
-    if (!otherUsers) {
-      return res.status(401).json({
-        message: 'Currently do not have any users.',
-      });
-    }
-    return res.status(200).json({
-      otherUsers,
-    });
   } catch (error) {
     console.log(error);
   }

@@ -1,14 +1,134 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title><%= title %></title>
     <link
       rel="stylesheet"
-      href="/stylesheets/style.css"
+      href="/styles/style.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
     />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <div class="w-1/5 mx-auto">
+      <div class="mt-8">
+        <img
+          class="ml-5"
+          width="24px"
+          src="https://www.edigitalagency.com.au/wp-content/uploads/new-Twitter-logo-x-black-png-1200x1227.png"
+          alt="twitter-logo"
+        />
+      </div>
+      <div class="mt-4">
+        <a
+          href="/"
+          class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full"
+        >
+          <CiHome
+            size="24px"
+            class="ml-2"
+          ></CiHome>
+          <h1 class="font-bold text-lg ml-2">Trang chủ</h1>
+        </a>
+        <div class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
+          <CiHashtag
+            size="24px"
+            class="ml-2"
+          ></CiHashtag>
+          <h1 class="font-bold text-lg ml-2">Khám phá</h1>
+        </div>
+        <div class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
+          <IoIosNotificationsOutline
+            size="24px"
+            class="ml-2"
+          ></IoIosNotificationsOutline>
+          <h1 class="font-bold text-lg ml-2">Thông báo</h1>
+        </div>
+        <a class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
+          <CiUser
+            size="24px"
+            class="ml-2"
+          ></CiUser>
+          <h1
+            onclick="profileButton()"
+            class="font-bold text-lg ml-2"
+          >
+            Hồ sơ
+          </h1>
+        </a>
+        <div class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
+          <CiBookmark
+            size="24px"
+            class="ml-2"
+          ></CiBookmark>
+          <h1 class="font-bold text-lg ml-2">Dấu trang</h1>
+        </div>
+        <div class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
+          <AiOutlineLogout
+            size="24px"
+            class="ml-2"
+          ></AiOutlineLogout>
+          <h1
+            onclick="logOut()"
+            class="font-bold text-lg ml-2"
+          >
+            Đăng xuất
+          </h1>
+        </div>
+        <button class="px-4 py-2 border-none text-md bg-blue-500 w-full rounded-full text-white font-bold mt-4">
+          Đăng bài
+        </button>
+      </div>
+    </div>
+    <script>
+      function profileButton() {
+        fetch('/api/users/me', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log('ok');
+          })
+          .catch((error) => {
+            console.error('There was a problem with the fetch operation:', error);
+          });
+      }
+      function logOut() {
+        fetch('/api/auth/logout', {
+          method: 'POST', // Phương thức POST
+          headers: {
+            'Content-Type': 'application/json', // Định dạng của dữ liệu gửi đi
+          },
+          body: JSON.stringify({}), // Dữ liệu gửi đi, rỗng trong trường hợp này
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            window.location.href = '/login';
+          })
+          .catch((error) => {
+            console.error('There was a problem with your fetch operation:', error);
+          });
+      }
+    </script>
   </body>
 </html>

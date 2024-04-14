@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Register Form</title>
+    <link
+      rel="stylesheet"
+      href="/styles/style.css"
+    />
+  </head>
+  <body>
+    <div class="max-w-xs mx-auto">
+      <h2 class="text-2xl font-bold mb-4">Register</h2>
+      <form id="register-form">
+        <div class="mb-4">
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700"
+            >Email:</label
+          >
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label
+            for="name"
+            class="block text-sm font-medium text-gray-700"
+            >Name:</label
+          >
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label
+            for="username"
+            class="block text-sm font-medium text-gray-700"
+            >Username:</label
+          >
+          <input
+            type="text"
+            id="username"
+            name="username"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700"
+            >Password:</label
+          >
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}"
+            title="Password must be at least 8 characters long, contain at least one number, one uppercase letter, one lowercase letter, and one special character."
+          />
+        </div>
+        <div class="mb-4">
+          <button
+            type="submit"
+            class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Register
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      document.getElementById('register-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = {
+          email: document.getElementById('email').value,
+          name: document.getElementById('name').value,
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value,
+        };
+        if (!validatePassword(formData.password)) {
+          alert(
+            'Password must be at least 8 characters long, contain at least one number, one uppercase letter, one lowercase letter, and one special character.',
+          );
+          return;
+        }
+        fetch('/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert('Registration successful');
+              window.location.href = '/login';
+            } else {
+              alert('Registration failed: ' + data.message);
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert('Error: ' + error.message);
+          });
+      });
+
+      function validatePassword(password) {
+        const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
+        return regex.test(password);
+      }
+    </script>
+  </body>
+</html>

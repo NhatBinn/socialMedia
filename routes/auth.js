@@ -72,6 +72,7 @@ router.post('/register', checkvalid(), async function (req, res, next) {
   }
   try {
     var newUser = new userModel({
+      name: req.body.name,
       username: req.body.username,
       password: req.body.password,
       email: req.body.email,
