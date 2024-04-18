@@ -6,9 +6,72 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
-    <title>Document</title>
+    <title>Profile của <%= user.name %></title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
   </head>
-  <body>
-    <h1>day la profile</h1>
+  <body class="bg-gray-100 font-sans">
+    <div class="bg-blue-600 text-white">
+      <div class="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <h1 class="text-3xl font-bold mt-2"><%= user.name %></h1>
+          <p class="mt-1"><%= user.email %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="my-6 text-center">
+      <h2 class="text-2xl font-semibold">Các Bài Đăng:</h2>
+    </div>
+
+    <div
+      id="postAll"
+      class="max-w-4xl mx-auto mb-6"
+    >
+      <!-- Các bài đăng sẽ được hiển thị tại đây -->
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Nếu user.id là một biến được render từ phía server qua EJS
+        const userId = '<%= user.id %>'; // Sử dụng EJS tag để gán giá trị
+        fetch(`/api/post/alltweets/${userId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            const postsContainer = document.getElementById('postAll');
+            if (data.tweets && data.tweets.length > 0) {
+              postsContainer.innerHTML = data.tweets
+                .map(
+                  (tweet) => `
+                    <div class="post">
+                            <h3>${tweet.description}</h3>
+                            <p>Posted by: ${tweet.userId}</p>
+                            <p>Likes: ${tweet.like.length}</p>
+                            <small>Đăng vào: ${new Date(tweet.createdAt).toLocaleString()}</small>
+                        </div>
+                    `,
+                )
+                .join('');
+            } else {
+              postsContainer.innerHTML = '<p>Không có bài đăng nào.</p>';
+            }
+          })
+          .catch((error) => {
+            console.error('Lỗi khi tải bài đăng:', error);
+            postsContainer.innerHTML = '<p>Lỗi khi tải bài đăng.</p>';
+          });
+      });
+    </script>
   </body>
 </html>

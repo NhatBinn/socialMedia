@@ -18,14 +18,6 @@
   </head>
   <body>
     <div class="w-1/5 mx-auto">
-      <div class="mt-8">
-        <img
-          class="ml-5"
-          width="24px"
-          src="https://www.edigitalagency.com.au/wp-content/uploads/new-Twitter-logo-x-black-png-1200x1227.png"
-          alt="twitter-logo"
-        />
-      </div>
       <div class="mt-4">
         <a
           href="/"
@@ -37,31 +29,16 @@
           ></CiHome>
           <h1 class="font-bold text-lg ml-2">Trang chủ</h1>
         </a>
-        <div class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
-          <CiHashtag
-            size="24px"
-            class="ml-2"
-          ></CiHashtag>
-          <h1 class="font-bold text-lg ml-2">Khám phá</h1>
-        </div>
-        <div class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
-          <IoIosNotificationsOutline
-            size="24px"
-            class="ml-2"
-          ></IoIosNotificationsOutline>
-          <h1 class="font-bold text-lg ml-2">Thông báo</h1>
-        </div>
-        <a class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
+
+        <a
+          href="/profile"
+          class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full"
+        >
           <CiUser
             size="24px"
             class="ml-2"
           ></CiUser>
-          <h1
-            onclick="profileButton()"
-            class="font-bold text-lg ml-2"
-          >
-            Hồ sơ
-          </h1>
+          <h1 class="font-bold text-lg ml-2">Hồ sơ</h1>
         </a>
         <div class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
           <CiBookmark
@@ -82,32 +59,36 @@
             Đăng xuất
           </h1>
         </div>
-        <button class="px-4 py-2 border-none text-md bg-blue-500 w-full rounded-full text-white font-bold mt-4">
-          Đăng bài
-        </button>
       </div>
+      <form
+        method="post"
+        action="/create-post"
+        class="max-w-md mx-auto bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
+      >
+        <div class="mb-4">
+          <label
+            for="post-text"
+            class="block text-gray-700 text-sm font-bold mb-2"
+            >Post Text:</label
+          >
+          <textarea
+            id="post-text"
+            name="postText"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="Enter your post text..."
+          ></textarea>
+        </div>
+        <div class="flex items-center justify-center">
+          <button
+            type="submit"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+          >
+            Post
+          </button>
+        </div>
+      </form>
     </div>
     <script>
-      function profileButton() {
-        fetch('/api/users/me', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.json();
-          })
-          .then((data) => {
-            console.log('ok');
-          })
-          .catch((error) => {
-            console.error('There was a problem with the fetch operation:', error);
-          });
-      }
       function logOut() {
         fetch('/api/auth/logout', {
           method: 'POST', // Phương thức POST

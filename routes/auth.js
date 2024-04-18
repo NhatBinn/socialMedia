@@ -122,10 +122,6 @@ router.post('/login', async function (req, res, next) {
   }
 });
 
-router.get('/me', protect, async function (req, res, next) {
-  resHandle(res, true, req.user);
-});
-
 router.post('/logout', async function (req, res, next) {
   resHandle(res, true, 'dang xuat thanh cong');
 });
