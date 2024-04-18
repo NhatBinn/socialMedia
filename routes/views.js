@@ -5,12 +5,19 @@ var post = require('../schemas/post');
 var protect = require('../middlewares/protectLogin');
 // xuat front - end
 //home index //localhost:3000/
-router.get('/', protect, function (req, res, next) {
+router.get('/', protect, async function (req, res, next) {
   if (!req.user) {
     res.redirect('/login');
     return;
   }
-  res.render('index', { title: 'Express', user });
+  try {
+    const posts = await post.find({ userId: req.user._id });
+    res.render('index', { user: req.user, posts: posts });
+  } catch (error) {
+    console.error('Error fetching user posts:', error);
+    res.status(500).send('Internal Server Error');
+  }
+ 
 });
 //login //localhost:3000/login
 router.get('/login', function (req, res, next) {

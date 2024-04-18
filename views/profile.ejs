@@ -34,8 +34,7 @@
     </div>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        // Nếu user.id là một biến được render từ phía server qua EJS
-        const userId = '<%= user.id %>'; // Sử dụng EJS tag để gán giá trị
+        const userId = '<%= user.id %>';
         fetch(`/api/post/alltweets/${userId}`, {
           method: 'GET',
           headers: {

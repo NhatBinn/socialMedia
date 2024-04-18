@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
-    <title><%= title %></title>
+    <title>Home</title>
     <link
       rel="stylesheet"
       href="/styles/style.css"
@@ -17,85 +17,140 @@
     />
   </head>
   <body>
-    <div class="w-1/5 mx-auto">
-      <div class="mt-4">
-        <a
-          href="/"
-          class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full"
-        >
-          <CiHome
-            size="24px"
-            class="ml-2"
-          ></CiHome>
-          <h1 class="font-bold text-lg ml-2">Trang chủ</h1>
-        </a>
+    <div class="container mx-auto flex">
+      <div class="w-1/5 bg-white p-4">
+        <!-- Sidebar content here -->
+        <div class="mt-4">
+          <h2 class="text-3xl font-bold mt-2">Xin chào <%= user.name %></h2>
 
-        <a
-          href="/profile"
-          class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full"
-        >
-          <CiUser
-            size="24px"
-            class="ml-2"
-          ></CiUser>
-          <h1 class="font-bold text-lg ml-2">Hồ sơ</h1>
-        </a>
-        <div class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
-          <CiBookmark
-            size="24px"
-            class="ml-2"
-          ></CiBookmark>
-          <h1 class="font-bold text-lg ml-2">Dấu trang</h1>
-        </div>
-        <div class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
-          <AiOutlineLogout
-            size="24px"
-            class="ml-2"
-          ></AiOutlineLogout>
-          <h1
-            onclick="logOut()"
-            class="font-bold text-lg ml-2"
+          <a
+            href="/"
+            class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full"
           >
-            Đăng xuất
-          </h1>
+            <CiHome
+              size="24px"
+              class="ml-2"
+            ></CiHome>
+            <h1 class="font-bold text-lg ml-2">Trang chủ</h1>
+          </a>
+
+          <a
+            href="/profile"
+            class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full"
+          >
+            <CiUser
+              size="24px"
+              class="ml-2"
+            ></CiUser>
+            <h1 class="font-bold text-lg ml-2">Hồ sơ</h1>
+          </a>
+          <div class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
+            <CiBookmark
+              size="24px"
+              class="ml-2"
+            ></CiBookmark>
+            <h1 class="font-bold text-lg ml-2">Dấu trang</h1>
+          </div>
+          <div class="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
+            <AiOutlineLogout
+              size="24px"
+              class="ml-2"
+            ></AiOutlineLogout>
+            <h1
+              onclick="logOut()"
+              class="font-bold text-lg ml-2"
+            >
+              Đăng xuất
+            </h1>
+          </div>
         </div>
       </div>
-      <form
-        method="post"
-        action="/create-post"
-        class="max-w-md mx-auto bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
-      >
-        <div class="mb-4">
-          <label
-            for="post-text"
-            class="block text-gray-700 text-sm font-bold mb-2"
-            >Post Text:</label
-          >
-          <textarea
-            id="post-text"
-            name="postText"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter your post text..."
-          ></textarea>
+
+      <div class="w-4/5">
+        <!-- Form and posts content here -->
+        <form
+          id="post-form"
+          class="max-w-xl mx-auto bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
+        >
+          <div class="mb-4">
+            <label
+              for="post-text"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >Nội dung status:</label
+            >
+            <textarea
+              id="post-text"
+              name="postText"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Nhập nội dung ..."
+            ></textarea>
+          </div>
+          <div class="flex items-center justify-center">
+            <button
+              type="submit"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+            >
+              Đăng
+            </button>
+          </div>
+        </form>
+
+        <div
+          id="postAll"
+          class="border border-gray-300 rounded p-4 mb-6 max-w-4xl mx-auto"
+        >
+          <!-- Các bài đăng sẽ được hiển thị tại đây -->
         </div>
-        <div class="flex items-center justify-center">
-          <button
-            type="submit"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
-          >
-            Post
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
+
     <script>
+      let userId; // Biến toàn cục để lưu trữ ID của người dùng
+
+      // Gán giá trị của req.user._id (ID của người dùng) vào biến toàn cục khi trang được tạo ra
+      window.onload = function () {
+        userId = '<%= user._id %>'; // Sử dụng cú pháp của mẫu động để nhận giá trị từ máy chủ
+      };
+
+      document.getElementById('post-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const postText = document.getElementById('post-text').value;
+
+        const formData = {
+          description: postText,
+          id: userId,
+        };
+
+        fetch('/api/post/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert('Đăng bài viết thành công');
+              document.getElementById('post-text').value = '';
+            } else {
+              alert('Đã xảy ra lỗi: ' + data.message);
+              document.getElementById('post-text').value = '';
+            }
+          })
+          .catch((error) => {
+            console.error('Lỗi:', error);
+            alert('Lỗi: ' + error.message);
+          });
+      });
+
       function logOut() {
         fetch('/api/auth/logout', {
-          method: 'POST', // Phương thức POST
+          method: 'POST',
           headers: {
-            'Content-Type': 'application/json', // Định dạng của dữ liệu gửi đi
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({}), // Dữ liệu gửi đi, rỗng trong trường hợp này
+          body: JSON.stringify({}),
         })
           .then((response) => {
             if (!response.ok) {
@@ -110,6 +165,43 @@
             console.error('There was a problem with your fetch operation:', error);
           });
       }
+      document.addEventListener('DOMContentLoaded', function () {
+        const userId = '<%= user.id %>';
+        fetch(`/api/post/alltweets/${userId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            const postsContainer = document.getElementById('postAll');
+            if (data.tweets && data.tweets.length > 0) {
+              postsContainer.innerHTML = data.tweets
+                .map(
+                  (tweet) => `
+                  <div class="post bg-white shadow-md rounded-md p-4 mb-6">
+                    <h3 class="text-xl font-bold mb-2">${tweet.description}</h3>
+                    <p class="text-gray-700">Likes: ${tweet.like.length}</p>
+                    <small class="text-gray-600">Đăng vào: ${new Date(tweet.createdAt).toLocaleString()}</small>
+                  </div>
+                    `,
+                )
+                .join('');
+            } else {
+              postsContainer.innerHTML = '<p>Không có bài đăng nào.</p>';
+            }
+          })
+          .catch((error) => {
+            console.error('Lỗi khi tải bài đăng:', error);
+            postsContainer.innerHTML = '<p>Lỗi khi tải bài đăng.</p>';
+          });
+      });
     </script>
   </body>
 </html>

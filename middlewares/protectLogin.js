@@ -13,7 +13,6 @@ module.exports = async function (req, res, next) {
     }
   }
   if (!token) {
-    // Chuyển hướng trực tiếp về trang đăng nhập nếu không có token
     return res.redirect('/login');
   }
   try {
