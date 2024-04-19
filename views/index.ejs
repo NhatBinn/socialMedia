@@ -15,9 +15,29 @@
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .chat-icon-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+      }
+    </style>
   </head>
   <body>
     <div class="container mx-auto flex">
+      <div class="chat-icon-container">
+        <a
+          href="/message"
+          class="text-white bg-blue-500 hover:bg-blue-600 rounded-full p-3 shadow-lg transition duration-300 ease-in-out"
+        >
+          <i class="fas fa-comments"></i>
+        </a>
+      </div>
       <div class="w-1/5 bg-white p-4">
         <!-- Sidebar content here -->
         <div class="mt-4">
@@ -105,11 +125,10 @@
     </div>
 
     <script>
-      let userId; // Biến toàn cục để lưu trữ ID của người dùng
+      let userId;
 
-      // Gán giá trị của req.user._id (ID của người dùng) vào biến toàn cục khi trang được tạo ra
       window.onload = function () {
-        userId = '<%= user._id %>'; // Sử dụng cú pháp của mẫu động để nhận giá trị từ máy chủ
+        userId = '<%= user._id %>';
       };
 
       document.getElementById('post-form').addEventListener('submit', function (event) {
@@ -167,7 +186,8 @@
       }
       document.addEventListener('DOMContentLoaded', function () {
         const userId = '<%= user.id %>';
-        fetch(`/api/post/alltweets/${userId}`, {
+        const userName = '<%= user.name %>';
+        fetch(`/api/post/alltweets`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -187,6 +207,7 @@
                   (tweet) => `
                   <div class="post bg-white shadow-md rounded-md p-4 mb-6">
                     <h3 class="text-xl font-bold mb-2">${tweet.description}</h3>
+                    <p class="text-gray-700">Name: ${userName}</p>
                     <p class="text-gray-700">Likes: ${tweet.like.length}</p>
                     <small class="text-gray-600">Đăng vào: ${new Date(tweet.createdAt).toLocaleString()}</small>
                   </div>

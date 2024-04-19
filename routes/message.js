@@ -5,6 +5,7 @@ var Conversation = require('../schemas/conversation');
 var Message = require('../schemas/message');
 var protect = require('../middlewares/protectLogin');
 
+// localhost:3000/api/message/:id
 router.get('/:id', protect, async function (req, res, next) {
   try {
     const receiverId = req.params.id;
@@ -17,7 +18,7 @@ router.get('/:id', protect, async function (req, res, next) {
     console.log(error);
   }
 });
-
+// localhost:3000/api/message/send/:id
 router.post('/send/:id', protect, async function (req, res, next) {
   try {
     const senderId = req.user.id;

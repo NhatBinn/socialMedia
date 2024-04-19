@@ -6,4 +6,5 @@ router.use('/users', require('./users'));
 router.use('/auth', require('./auth'));
 router.use('/post', require('./post'));
 router.use('/message', require('./message'));
+
 module.exports = router;

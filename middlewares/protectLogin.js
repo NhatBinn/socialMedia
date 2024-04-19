@@ -21,15 +21,12 @@ module.exports = async function (req, res, next) {
       let id = info.id;
       let user = await userModel.findById(id);
       req.user = user;
-      // Lưu userId vào biến locals để sử dụng trong các route khác
-      res.locals.userId = id;
+      res.locals.userId = id; //luu id user vao` local
       next();
     } else {
-      // Chuyển hướng trực tiếp về trang đăng nhập nếu token hết hạn
       return res.redirect('/login');
     }
   } catch (error) {
-    // Chuyển hướng trực tiếp về trang đăng nhập nếu có lỗi xác thực token
     return res.redirect('/login');
   }
 };

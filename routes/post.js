@@ -20,7 +20,15 @@ router.get('/alltweets/:id', async function (req, res, next) {
     console.log(error);
   }
 });
-
+router.get('/alltweets', async function (req, res, next) {
+  try {
+    const allTweets = await Tweet.find();
+    return res.status(200).json({ tweets: allTweets });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'error alltweets' });
+  }
+});
 router.get('/followingtweets/:id', async function (req, res, next) {
   try {
     const id = req.params.id;
